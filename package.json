@@ -1,5 +1,5 @@
 {
-	"name":         "rmv-export-stops-by-coordinates",
+	"name":         "hafas-export-stops-by-coordinates",
 	"description" : "Exports stops from HAFAS by bounding box coordinates.",
 	"version":      "0.0.1",
 	"main":         "index.js",
