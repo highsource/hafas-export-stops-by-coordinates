@@ -1,0 +1,30 @@
+{
+	"name":         "rmv-export-stops-by-coordinates",
+	"description" : "Exports stops from HAFAS by bounding box coordinates.",
+	"version":      "0.0.1",
+	"main":         "index.js",
+	"files":        ["index.js"],
+	"engines" :     {"node": ">=6"},
+	"keywords" : [
+		"HAFAS"
+	],
+	"homepage" : "http://github.com/highsource/hafas-export-stops-by-coordinates",
+	"bugs" : {
+		"url" : "http://github.com/highsource/hafas-export-stops-by-coordinates/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/highsource/hafas-export-stops-by-coordinates.git"
+	},
+	"license" : "BSD-2-Clause",
+	"author" : {
+		"name" : "Alexey Valikov",
+		"url" : "http://github.com/highsource"
+	},
+	"main" : "index.js",
+	"dependencies": {
+		"got": "^6.3",
+		"csv": "^1.1.1",
+		"left-pad": "^1.1.3"
+	}
+}
