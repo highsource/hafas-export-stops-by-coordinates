@@ -12,14 +12,17 @@ const minx = 5;
 const miny = 47;
 const maxx = 15;
 const maxy = 56;
+const includeStopIdPrefixes = null;
+const excludeStopIdPrefixes = [51, 54, 80, 81, 84, 85, 87, 88];
 
-exportStops(urlTemplate, minx, miny, maxx, maxy);
+exportStops(urlTemplate, minx, miny, maxx, maxy, includeStopIdPrefixes, excludeStopIdPrefixes);
 ```
 
 Parameters:
 
 * `urlTemplate` - template of the `query.exe/dny` HAFAS endpoint. Placeholders `{minx}`, `{miny}`, `{maxx}`, `{maxy}` will be replaced with bounding box coordinates.
 * `minx`, `miny`, `maxx`, `maxy` - coordinates of the bounding box to start with.
+* `excludeStopIdPrefixes` - prefixes of stop ids which should be excluded. Last 5 digits of the stop id will be dropped when comparison. For example `80` matches `8004009`.
 
 The script starts from the provided bounding box and requests stops. If no stops are returned or if the result is too large (more that 200 stops), the bounding box is divided into four smaller equal bounding boxes which are recursively queried in turn. This is repeated until the query produces adequate results or the bounding box gets too small (less that 0.25 in both dimensions).
 

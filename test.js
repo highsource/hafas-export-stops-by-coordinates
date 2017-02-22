@@ -5,5 +5,7 @@ const minx = 5;
 const miny = 47;
 const maxx = 15;
 const maxy = 56;
+const includeStopIdPrefixes = null;
+const excludeStopIdPrefixes = [51, 54, 80, 81, 84, 85, 87, 88];
 
-exportStops(urlTemplate, minx, miny, maxx, maxy);
+exportStops(urlTemplate, minx, miny, maxx, maxy, includeStopIdPrefixes, excludeStopIdPrefixes);

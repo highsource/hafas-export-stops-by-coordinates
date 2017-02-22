@@ -96,6 +96,36 @@ const removeDuplicateStops = function(stops) {
 	return filteredStops;
 };
 
+const retainStopsWithStopIdPrefixes = function(stopIdPrefixes) {
+	if (stopIdPrefixes) {
+		const stopIdPrefixMap = stopIdPrefixes.reduce((stopIdPrefixMap, stopIdPrefix) => Object.assign(stopIdPrefixMap, { [stopIdPrefix]: true }), {});
+		return stops => stops.filter(
+			stop => {
+				const stopIdPrefix = Number(stop.stop_id) / 100000;
+				return stopIdPrefixMap[stopIdPrefix];
+			}
+		);
+	}
+	else {
+		return stops => stops;
+	}
+};
+
+const removeStopsWithStopIdPrefixes = function(stopIdPrefixes) {
+	if (stopIdPrefixes) {
+		const stopIdPrefixMap = stopIdPrefixes.reduce((stopIdPrefixMap, stopIdPrefix) => Object.assign(stopIdPrefixMap, { [stopIdPrefix]: true }), {});
+		return stops => stops.filter(
+			stop => {
+				const stopIdPrefix = Math.floor(Number(stop.stop_id) / 100000);
+				return !stopIdPrefixMap[stopIdPrefix];
+			}
+		);
+	}
+	else {
+		return stops => stops;
+	}
+};
+
 const sortStops = function(stops) {
 	return stops.sort((s1, s2) => s1.stop_id < s2.stop_id);
 };
@@ -106,11 +136,13 @@ const outputStops = function(stops) {
 	});
 }
 
-const exportStops = function(urlTemplate, minx, miny, maxx, maxy)  {
+const exportStops = function(urlTemplate, minx, miny, maxx, maxy, includeStopIdPrefixes, excludeStopIdPrefixes)  {
 	queryStops(urlTemplate, minx, miny, maxx, maxy)
 	.then(convertStops)
 	.then(removeStopsWithoutCoordinates)
 	.then(removeDuplicateStops)
+	.then(retainStopsWithStopIdPrefixes(includeStopIdPrefixes))
+	.then(removeStopsWithStopIdPrefixes(excludeStopIdPrefixes))
 	.then(sortStops)
 	.then(outputStops)
 	.catch(error => console.log(error));
