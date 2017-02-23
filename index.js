@@ -5,6 +5,19 @@ const leftPad = require('left-pad');
 const EPSILON = Math.pow(2, -2);
 const MAX_STOPS = 200;
 
+const parseJSON = function(body) {
+	try {
+		return JSON.parse(body);
+	}
+	catch(error) {
+		const expression = 'var _result =' + body + ';';
+		eval(expression);
+		var result = _result;
+		delete _result;
+		return result;
+	}
+}
+
 const queryStops = function(urlTemplate, minx, miny, maxx, maxy) {
 	const url = urlTemplate
 		.replace("{minx}", Math.round(minx * 1000000))
@@ -15,7 +28,7 @@ const queryStops = function(urlTemplate, minx, miny, maxx, maxy) {
 	return new Promise(function(resolve, reject){
 		got(url)
 		.then(response => {
-			const result = JSON.parse(response.body);
+			const result = parseJSON(response.body);
 			// console.log("Got " + result.stops.length + " results from " + url + ".");
 			const smallestAllowedBoundingBox = Math.max(maxx - minx, maxy - miny) <= EPSILON;
 			if (result.stops.length > 0 && (result.stops.length <= MAX_STOPS || smallestAllowedBoundingBox)) {
