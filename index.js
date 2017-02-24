@@ -31,7 +31,7 @@ const queryStops = function(urlTemplate, minx, miny, maxx, maxy) {
 			const result = parseJSON(response.body);
 			// console.log("Got " + result.stops.length + " results from " + url + ".");
 			const smallestAllowedBoundingBox = Math.max(maxx - minx, maxy - miny) <= EPSILON;
-			if (result.stops.length > 0 && (result.stops.length <= MAX_STOPS || smallestAllowedBoundingBox)) {
+			if (result.stops.length > 0 && (result.stops.length < MAX_STOPS || smallestAllowedBoundingBox)) {
 				resolve(result.stops);
 			} else if (!smallestAllowedBoundingBox)
 			{
