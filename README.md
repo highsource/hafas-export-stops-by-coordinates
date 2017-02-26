@@ -8,6 +8,7 @@ Exports stops from HAFAS by bounding box coordinates.
 const exportStops = require("hafas-export-stops-by-coordinates");
 
 const urlTemplate = "https://www.rmv.de/auskunft/bin/jp/query.exe/dny?performLocating=2&tpl=stop2json&look_stopclass=2147483647&look_minx={minx}&look_miny={miny}&look_maxx={maxx}&look_maxy={maxy}";
+const encoding = "UTF-8";
 const minx = 5;
 const miny = 47;
 const maxx = 15;
@@ -15,12 +16,13 @@ const maxy = 56;
 const includeStopIdPrefixes = null;
 const excludeStopIdPrefixes = [51, 54, 80, 81, 84, 85, 87, 88];
 
-exportStops(urlTemplate, minx, miny, maxx, maxy, includeStopIdPrefixes, excludeStopIdPrefixes);
+exportStops(urlTemplate, encoding, minx, miny, maxx, maxy, includeStopIdPrefixes, excludeStopIdPrefixes);
 ```
 
 Parameters:
 
 * `urlTemplate` - template of the `query.exe/dny` HAFAS endpoint. Placeholders `{minx}`, `{miny}`, `{maxx}`, `{maxy}` will be replaced with bounding box coordinates.
+* `encoding` - encoding of the responses.
 * `minx`, `miny`, `maxx`, `maxy` - coordinates of the bounding box to start with.
 * `excludeStopIdPrefixes` - prefixes of stop ids which should be excluded. Last 5 digits of the stop id will be dropped when comparison. For example `80` matches `8004009`.
 

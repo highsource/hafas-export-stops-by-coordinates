@@ -1,6 +1,7 @@
 const got = require('got');
 const csv = require('csv');
 const leftPad = require('left-pad');
+const iconvlite = require('iconv-lite');
 
 const EPSILON = Math.pow(2, -2);
 const MAX_STOPS = 200;
@@ -18,7 +19,7 @@ const parseJSON = function(body) {
 	}
 }
 
-const queryStops = function(urlTemplate, minx, miny, maxx, maxy) {
+const queryStops = function(urlTemplate, encoding, minx, miny, maxx, maxy) {
 	const url = urlTemplate
 		.replace("{minx}", Math.round(minx * 1000000))
 		.replace("{miny}", Math.round(miny * 1000000))
@@ -26,38 +27,39 @@ const queryStops = function(urlTemplate, minx, miny, maxx, maxy) {
 		.replace("{maxy}", Math.round(maxy * 1000000));
 
 	return new Promise(function(resolve, reject){
-		got(url)
+		got(url, {encoding: null})
 		.then(response => {
-			const result = parseJSON(response.body);
+			const content = iconvlite.decode(response.body, encoding || 'UTF-8'); 
+			const result = parseJSON(content);
 			// console.log("Got " + result.stops.length + " results from " + url + ".");
 			const smallestAllowedBoundingBox = Math.max(maxx - minx, maxy - miny) <= EPSILON;
 			if (result.stops.length > 0 && (result.stops.length < MAX_STOPS || smallestAllowedBoundingBox)) {
 				resolve(result.stops);
 			} else if (!smallestAllowedBoundingBox)
 			{
-				subqueryStops(urlTemplate, minx, miny, maxx, maxy).then(resolve).catch(reject);
+				subqueryStops(urlTemplate, encoding, minx, miny, maxx, maxy).then(resolve).catch(reject);
 			} else {
 				resolve([]);
 			}
 		})
 		.catch(error => {
 			// console.log("Error querying " + url + ", requerying.");
-			subqueryStops(urlTemplate, minx, miny, maxx, maxy).then(resolve).catch(reject);
+			subqueryStops(urlTemplate, encoding, minx, miny, maxx, maxy).then(resolve).catch(reject);
 		});
 	});
 };
 
-const subqueryStops = function(urlTemplate, minx, miny, maxx, maxy) {
+const subqueryStops = function(urlTemplate, encoding, minx, miny, maxx, maxy) {
 
 	return new Promise(function(resolve, reject){
 		const midx = (minx + maxx) / 2;
 		const midy = (miny + maxy) / 2;
 		Promise
 		.all([
-			queryStops(urlTemplate, minx, miny, midx, midy),
-			queryStops(urlTemplate, midx, miny, maxx, midy),
-			queryStops(urlTemplate, minx, midy, midx, maxy),
-			queryStops(urlTemplate, midx, midy, maxx, maxy)
+			queryStops(urlTemplate, encoding, minx, miny, midx, midy),
+			queryStops(urlTemplate, encoding, midx, miny, maxx, midy),
+			queryStops(urlTemplate, encoding, minx, midy, midx, maxy),
+			queryStops(urlTemplate, encoding, midx, midy, maxx, maxy)
 		])
 		.then(results => resolve([].concat.apply([], results)))
 		.catch(reject);
@@ -149,8 +151,8 @@ const outputStops = function(stops) {
 	});
 }
 
-const exportStops = function(urlTemplate, minx, miny, maxx, maxy, includeStopIdPrefixes, excludeStopIdPrefixes)  {
-	queryStops(urlTemplate, minx, miny, maxx, maxy)
+const exportStops = function(urlTemplate, encoding, minx, miny, maxx, maxy, includeStopIdPrefixes, excludeStopIdPrefixes)  {
+	queryStops(urlTemplate, encoding, minx, miny, maxx, maxy)
 	.then(convertStops)
 	.then(removeStopsWithoutCoordinates)
 	.then(removeDuplicateStops)
