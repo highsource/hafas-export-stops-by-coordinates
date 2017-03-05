@@ -1,7 +1,7 @@
 {
 	"name":         "hafas-export-stops-by-coordinates",
 	"description" : "Exports stops from HAFAS by bounding box coordinates.",
-	"version":      "0.3.0",
+	"version":      "0.3.1",
 	"main":         "index.js",
 	"files":        ["index.js"],
 	"engines" :     {"node": ">=6"},

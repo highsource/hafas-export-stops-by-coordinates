@@ -3,7 +3,7 @@ const csv = require('csv');
 const leftPad = require('left-pad');
 const iconvlite = require('iconv-lite');
 
-const EPSILON = Math.pow(2, -2);
+const EPSILON = Math.pow(2, -3);
 const MAX_STOPS = 200;
 
 const parseJSON = function(body) {
